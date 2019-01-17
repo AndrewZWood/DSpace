@@ -297,7 +297,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
             }
         }
 
-
+        Group anonGroup = groupService.findByName(c, "Anonymous");
         for (ResourcePolicy rp : getPoliciesActionFilter(c, o, action))
         {
 
@@ -328,6 +328,17 @@ public class AuthorizeServiceImpl implements AuthorizeService
                     // of that group
                     c.cacheAuthorizedAction(o, action, e, true, rp);
                     return true;
+                }
+                if(rp.getRpType().equalsIgnoreCase("TYPE_INHERITED")) {
+                    if (o.getType() == 2) {
+                        List<ResourcePolicy> itemRPs = ((Item) o).getOwningCollection().getResourcePolicies();
+                        for (ResourcePolicy irp : itemRPs) {
+                            if (irp.getGroup().getID() == anonGroup.getID()) {
+                                c.cacheAuthorizedAction(o, action, e, true, rp);
+                                return true;
+                            }
+                        }
+                    }
                 }
             }
 
