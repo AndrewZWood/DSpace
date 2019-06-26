@@ -48,53 +48,87 @@ public class EntityTypeServiceImplTest   {
 
     @Test
     public void testFindByEntityType() throws Exception {
+        // Mock lower level DAO to return our mocked EntityType
         when(entityTypeDAO.findByEntityType(context, "TestType")).thenReturn(entityType);
+
+        // The EntityType reported from our TestType parameter should match our mocked EntityType
         assertEquals("TestFindByEntityType 0", entityType, entityTypeService.findByEntityType(context, "TestType"));
     }
 
 
     @Test
     public void testFindAll() throws Exception {
+        //Decalre objects utilized in unit test
         List<EntityType> entityTypeList = new ArrayList<>();
+
+        // Mock lower level DAO to return our mocked entityTypeList
         when(entityTypeDAO.findAll(context, EntityType.class)).thenReturn(entityTypeList);
+
+        // The EntityType(s) reported from our mocked state should match our entityTypeList
         assertEquals("TestFindAll 0", entityTypeList, entityTypeService.findAll(context));
     }
 
 
     @Test
     public void testCreate() throws Exception {
+        // Mock admin state
         when(authorizeService.isAdmin(context)).thenReturn(true);
+
+        //Decalre objects utilized in unit test
         EntityType entityType = new EntityType();
         entityType.setLabel("Test");
+
+        // Mock lower level DAO to return our defined EntityType
         when(entityTypeDAO.create(any(), any())).thenReturn(entityType);
+
+        // The newly created EntityType's label should match our mocked EntityType's label
         assertEquals("TestCreate 0", entityType.getLabel(), entityTypeService.create(context, "Test").getLabel());
+        // The newly created EntityType label should match our mocked EntityType
         assertEquals("TestCreate 1", entityType, entityTypeService.create(context));
     }
 
     @Test
     public void testFind() throws Exception {
+        // Mock lower level DAO to return our mocked EntityType
         when(entityTypeDAO.findByID(context, EntityType.class, 0)).thenReturn(entityType);
+
+        // The reported EntityType should match our mocked entityType
         assertEquals("TestFind 0", entityType, entityTypeService.find(context, 0));
     }
 
     @Test
     public void testUpdate() throws Exception {
-        EntityType entityTypeTest = mock(EntityType.class);
+        //Decalre objects utilized in unit test
         List<EntityType> entityTypeList = new ArrayList<>();
         entityTypeList.add(entityType);
+
+        // Mock admin state
         when(authorizeService.isAdmin(context)).thenReturn(true);
-        entityTypeService.update(context, entityTypeTest);
+
+        // Invoke both impls of void method update()
+        entityTypeService.update(context, entityType);
         entityTypeService.update(context, entityTypeList);
-        Mockito.verify(entityTypeDAO,times(1)).save(context, entityType);
+
+        // Verify entityTypeDAO.save was invoked twice to confirm proper invocation of both impls of update()
+        Mockito.verify(entityTypeDAO,times(2)).save(context, entityType);
     }
 
     @Test
     public void testDelete() throws Exception {
+        // Mock admin state
         when(authorizeService.isAdmin(context)).thenReturn(true);
+
+        // Invoke void method delete()
         entityTypeService.delete(context, entityType);
+
+        // Verify entityTypeDAO.delete() ran once to confrim proper invocation of delete()
         Mockito.verify(entityTypeDAO,times(1)).delete(context, entityType);
     }
 
+    /**
+     * Helper method that reutrns new EntityType
+     * @return new EntityType
+     */
     public EntityType makeEntityType() {
         return new EntityType();
     }

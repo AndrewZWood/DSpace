@@ -260,7 +260,8 @@ public class EntityServiceImplTest  {
         RelationshipType relationshipType = mock(RelationshipType.class);
         list.add(relationshipType);
 
-        // Mock the state of objects utilized in getRelationshipTypesByLabel() to meet the success criteria of the invocation
+        // Mock the state of objects utilized in getRelationshipTypesByLabel()
+        // to meet the success criteria of the invocation
         when(relationshipTypeService.findAll(context)).thenReturn(list);
         when(relationshipType.getLeftLabel()).thenReturn("leftLabel");
         when(relationshipType.getRightLabel()).thenReturn("rightLabel");
